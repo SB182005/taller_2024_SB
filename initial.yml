@@ -1,6 +1,7 @@
 ---
 - hosts: linux
   user: sysadmin
+  become: true
   vars:
     ansible_host_key_checking: false
 
@@ -15,14 +16,14 @@
   - name: Deshabilitar login de root por ssh
     ansible.builtin.lineinfile:
       path: /etc/ssh/sshd_config
-      regexp: '^PermitRootLogin'
-      line: "PermitRootLogin: no"
+      regexp: '^(P|#P)ermitRootLogin'
+      line: "PermitRootLogin no"
     notify: Reiniciar servidor ssh
 
   - name: Deshabilitar login con password
     ansible.builtin.lineinfile:
       path: /etc/ssh/sshd_config
-      regexp: '^PasswordAuthentication'
+      regexp: '^(P|#P)asswordAuthentication'
       line: "PasswordAuthentication no"
     notify: Reiniciar servidor ssh
 

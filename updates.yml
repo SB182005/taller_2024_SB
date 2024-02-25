@@ -1,0 +1,13 @@
+---
+- hosts: linux
+  user: sysadmin
+  become: true
+
+  tasks:
+
+  - name: Update packages in Rocky Server
+    ansible.builtin.yum:
+      name: "*"
+      state: latest
+    When: ansible_os_family = RedHat
+
