@@ -1,13 +1,31 @@
 ---
-- hosts: linux
-  user: sysadmin
-  become: true
+- name: Install all updates
+  hosts: "{{ target_hosts | default('linux') }}"
+  become: yes
 
   tasks:
+    - name: RHEL | Install updates
+      yum:
+        name: "*"
+        state: latest
+        exclude: "{{ exclude_packages | default(omit) }}"
+      when: "ansible_pkg_mgr == 'yum'"
 
-  - name: Update packages in Rocky Server
-    ansible.builtin.yum:
-      name: "*"
-      state: latest
-    When: ansible_os_family = RedHat
+    - name: DEBIAN | Install aptitude
+      apt:
+        name: aptitude
+        state: present
+        update_cache: yes
+      when: "ansible_pkg_mgr == 'apt'"
+
+    - name: DEBIAN | Install updates
+      apt:
+        update_cache: yes
+        cache_valid_time: 7200
+        upgrade: full
+        only_upgrade: yes
+      when: "ansible_pkg_mgr == 'apt'"
+
+ 
+  
 
