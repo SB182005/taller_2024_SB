@@ -27,10 +27,31 @@
       line: "PasswordAuthentication no"
     notify: Reiniciar servidor ssh
 
+  - name: instalar UFW
+    ansible.builtin.apt:
+      name: ufw
+      state: present
+      update_cache: true
+    when: ansible_os_family == "Debian"
+
+  - name: Habilitar Firewall con puertos deseados
+    community.general.ufw:
+      proto: tcp
+      port: "{{ item }}"
+      rule: allow
+      default: deny
+      state: enabled
+    loop:
+    - 22
+    - 8080
+    when: ansible_os_family == "Debian" 
+
   handlers: 
 
   - name: Reiniciar servidor ssh
     ansible.builtin.systemd:
       name: sshd
-      state: restarted 
+      state: restarted
+
+
 
